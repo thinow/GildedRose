@@ -35,41 +35,29 @@ public class GildedRose {
 		decreaseSellIn(item);
 
 		if ("Aged Brie".equals(item.getName())) {
-			if (item.getQuality() < 50) {
-				increaseQuality(item);
-			}
+			increaseQuality(item);
 			if (item.getSellIn() < 0) {
-				if (item.getQuality() < 50) {
-					increaseQuality(item);
-				}
+				increaseQuality(item);
 			}
 		} else if ("Backstage passes to a TAFKAL80ETC concert".equals(item.getName())) {
-			if (item.getQuality() < 50) {
+			increaseQuality(item);
+
+			if (item.getSellIn() < 10) {
 				increaseQuality(item);
-
-				if (item.getSellIn() < 10) {
-					if (item.getQuality() < 50) {
-						increaseQuality(item);
-					}
-				}
-
-				if (item.getSellIn() < 5) {
-					if (item.getQuality() < 50) {
-						increaseQuality(item);
-					}
-				}
 			}
+
+			if (item.getSellIn() < 5) {
+				increaseQuality(item);
+			}
+
 			if (item.getSellIn() < 0) {
 				removeQuality(item);
 			}
+
 		} else {
-			if (item.getQuality() > 0) {
-				decreaseQuality(item);
-			}
+			decreaseQuality(item);
 			if (item.getSellIn() < 0) {
-				if (item.getQuality() > 0) {
-					decreaseQuality(item);
-				}
+				decreaseQuality(item);
 			}
 		}
 	}
@@ -79,11 +67,15 @@ public class GildedRose {
 	}
 
 	private static void increaseQuality(Item item) {
-		item.setQuality(item.getQuality() + 1);
+		if (item.getQuality() < 50) {
+			item.setQuality(item.getQuality() + 1);
+		}
 	}
 
 	private static void decreaseQuality(Item item) {
-		item.setQuality(item.getQuality() - 1);
+		if (item.getQuality() > 0) {
+			item.setQuality(item.getQuality() - 1);
+		}
 	}
 
 	private static void removeQuality(Item item) {
