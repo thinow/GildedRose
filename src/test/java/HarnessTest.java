@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-public class GildedRoseTest {
+public class HarnessTest {
 
 	private static final String[] NO_ARGUMENTS = null;
 
