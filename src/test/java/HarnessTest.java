@@ -23,4 +23,17 @@ public class HarnessTest {
 		assertThat(items).onProperty("sellIn").containsExactly(9, 1, 4, 0, 14, 2);
 		assertThat(items).onProperty("quality").containsExactly(19, 1, 6, 80, 21, 5);
 	}
+
+	@Test
+	public void evaluateItemsAfterRunAndUpdate() throws Exception {
+		// when
+		GildedRose.main(NO_ARGUMENTS);
+		GildedRose.updateQuality();
+
+		// then
+		List<Item> items = GildedRose.getItems();
+		assertThat(items).onProperty("name").containsExactly(EXPECTED_NAMES);
+		assertThat(items).onProperty("sellIn").containsExactly(8, 0, 3, 0, 13, 1);
+		assertThat(items).onProperty("quality").containsExactly(18, 2, 5, 80, 22, 4);
+	}
 }
