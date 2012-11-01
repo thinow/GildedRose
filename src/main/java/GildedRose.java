@@ -10,8 +10,6 @@ public class GildedRose {
 	 */
 	public static void main(String[] args) {
 
-		System.out.println("OMGHAI!");
-
 		items = new ArrayList<Item>();
 		items.add(new Item("+5 Dexterity Vest", 10, 20));
 		items.add(new Item("Aged Brie", 2, 0));
