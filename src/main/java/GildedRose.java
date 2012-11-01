@@ -32,6 +32,8 @@ public class GildedRose {
 			return;
 		}
 
+		decreaseSellIn(item);
+
 		if ("Aged Brie".equals(item.getName())) {
 			if (item.getQuality() < 50) {
 				increaseQuality(item);
@@ -40,13 +42,13 @@ public class GildedRose {
 			if (item.getQuality() < 50) {
 				increaseQuality(item);
 
-				if (item.getSellIn() < 11) {
+				if (item.getSellIn() < 10) {
 					if (item.getQuality() < 50) {
 						increaseQuality(item);
 					}
 				}
 
-				if (item.getSellIn() < 6) {
+				if (item.getSellIn() < 5) {
 					if (item.getQuality() < 50) {
 						increaseQuality(item);
 					}
@@ -57,8 +59,6 @@ public class GildedRose {
 				decreaseQuality(item);
 			}
 		}
-
-		decreaseSellIn(item);
 
 		if ("Aged Brie".equals(item.getName())) {
 			if (item.getSellIn() < 0) {
