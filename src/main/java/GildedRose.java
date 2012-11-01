@@ -38,6 +38,11 @@ public class GildedRose {
 			if (item.getQuality() < 50) {
 				increaseQuality(item);
 			}
+			if (item.getSellIn() < 0) {
+				if (item.getQuality() < 50) {
+					increaseQuality(item);
+				}
+			}
 		} else if ("Backstage passes to a TAFKAL80ETC concert".equals(item.getName())) {
 			if (item.getQuality() < 50) {
 				increaseQuality(item);
@@ -54,23 +59,13 @@ public class GildedRose {
 					}
 				}
 			}
-		} else {
-			if (item.getQuality() > 0) {
-				decreaseQuality(item);
-			}
-		}
-
-		if ("Aged Brie".equals(item.getName())) {
-			if (item.getSellIn() < 0) {
-				if (item.getQuality() < 50) {
-					increaseQuality(item);
-				}
-			}
-		} else if ("Backstage passes to a TAFKAL80ETC concert".equals(item.getName())) {
 			if (item.getSellIn() < 0) {
 				removeQuality(item);
 			}
 		} else {
+			if (item.getQuality() > 0) {
+				decreaseQuality(item);
+			}
 			if (item.getSellIn() < 0) {
 				if (item.getQuality() > 0) {
 					decreaseQuality(item);
