@@ -1,3 +1,5 @@
+import static java.lang.Math.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,15 +57,11 @@ public class GildedRose {
 	}
 
 	private static void increaseQuality(Item item) {
-		if (item.getQuality() < 50) {
-			item.setQuality(item.getQuality() + 1);
-		}
+		item.setQuality(min(item.getQuality() + 1, 50));
 	}
 
 	private static void decreaseQuality(Item item) {
-		if (item.getQuality() > 0) {
-			item.setQuality(item.getQuality() - 1);
-		}
+		item.setQuality(max(item.getQuality() - 1, 0));
 	}
 
 	private static void removeQuality(Item item) {
