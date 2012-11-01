@@ -1,4 +1,3 @@
-import static java.lang.Math.*;
 import lombok.AllArgsConstructor;
 import lombok.Delegate;
 
@@ -9,45 +8,21 @@ public class ItemUpdater {
 	private Item item;
 
 	public void update() {
+		Policy policy = findPolicyOf(item);
+		policy.updateSellIn(item);
+		policy.updateQuality(item);
+	}
+
+	private Policy findPolicyOf(Item item) {
 		if ("Sulfuras, Hand of Ragnaros".equals(getName())) {
-			return;
-		}
-
-		decreaseSellIn();
-
-		if ("Aged Brie".equals(getName())) {
-			increaseQuality();
-			if (getSellIn() < 0)
-				increaseQuality();
+			return new LegendaryPolicy();
+		} else if ("Aged Brie".equals(getName())) {
+			return new CheesePolicy();
 		} else if ("Backstage passes to a TAFKAL80ETC concert".equals(getName())) {
-			increaseQuality();
-			if (getSellIn() < 10)
-				increaseQuality();
-			if (getSellIn() < 5)
-				increaseQuality();
-			if (getSellIn() < 0)
-				removeQuality();
+			return new ConcertPassPolicy();
 		} else {
-			decreaseQuality();
-			if (getSellIn() < 0)
-				decreaseQuality();
+			return new StandardPolicy();
 		}
-	}
-
-	private void decreaseSellIn() {
-		setSellIn(getSellIn() - 1);
-	}
-
-	private void increaseQuality() {
-		setQuality(min(getQuality() + 1, 50));
-	}
-
-	private void decreaseQuality() {
-		setQuality(max(getQuality() - 1, 0));
-	}
-
-	private void removeQuality() {
-		setQuality(0);
 	}
 
 }
