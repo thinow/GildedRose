@@ -34,49 +34,65 @@ public class GildedRose {
 
 		if ("Aged Brie".equals(item.getName())) {
 			if (item.getQuality() < 50) {
-				item.setQuality(item.getQuality() + 1);
+				increaseQuality(item);
 			}
 		} else if ("Backstage passes to a TAFKAL80ETC concert".equals(item.getName())) {
 			if (item.getQuality() < 50) {
-				item.setQuality(item.getQuality() + 1);
+				increaseQuality(item);
 
 				if (item.getSellIn() < 11) {
 					if (item.getQuality() < 50) {
-						item.setQuality(item.getQuality() + 1);
+						increaseQuality(item);
 					}
 				}
 
 				if (item.getSellIn() < 6) {
 					if (item.getQuality() < 50) {
-						item.setQuality(item.getQuality() + 1);
+						increaseQuality(item);
 					}
 				}
 			}
 		} else {
 			if (item.getQuality() > 0) {
-				item.setQuality(item.getQuality() - 1);
+				decreaseQuality(item);
 			}
 		}
 
-		item.setSellIn(item.getSellIn() - 1);
+		decreaseSellIn(item);
 
 		if ("Aged Brie".equals(item.getName())) {
 			if (item.getSellIn() < 0) {
 				if (item.getQuality() < 50) {
-					item.setQuality(item.getQuality() + 1);
+					increaseQuality(item);
 				}
 			}
 		} else if ("Backstage passes to a TAFKAL80ETC concert".equals(item.getName())) {
 			if (item.getSellIn() < 0) {
-				item.setQuality(item.getQuality() - item.getQuality());
+				removeQuality(item);
 			}
 		} else {
 			if (item.getSellIn() < 0) {
 				if (item.getQuality() > 0) {
-					item.setQuality(item.getQuality() - 1);
+					decreaseQuality(item);
 				}
 			}
 		}
+	}
+
+	private static void decreaseSellIn(Item item) {
+		item.setSellIn(item.getSellIn() - 1);
+	}
+
+	private static void increaseQuality(Item item) {
+		item.setQuality(item.getQuality() + 1);
+	}
+
+	private static void decreaseQuality(Item item) {
+		item.setQuality(item.getQuality() - 1);
+	}
+
+	private static void removeQuality(Item item) {
+		item.setQuality(0);
 	}
 
 	public static List<Item> getItems() {
