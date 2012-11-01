@@ -5,9 +5,6 @@ public class GildedRose {
 
 	private static List<Item> items = null;
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 
 		items = new ArrayList<Item>();
@@ -18,16 +15,16 @@ public class GildedRose {
 		items.add(new Item("Backstage passes to a TAFKAL80ETC concert", 15, 20));
 		items.add(new Item("Conjured Mana Cake", 3, 6));
 
-		updateQuality();
+		update();
 	}
 
-	public static void updateQuality() {
+	public static void update() {
 		for (Item item : items) {
-			updateQuality(item);
+			update(item);
 		}
 	}
 
-	private static void updateQuality(Item item) {
+	private static void update(Item item) {
 		if ("Sulfuras, Hand of Ragnaros".equals(item.getName())) {
 			return;
 		}
