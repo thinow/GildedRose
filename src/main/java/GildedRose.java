@@ -36,29 +36,20 @@ public class GildedRose {
 
 		if ("Aged Brie".equals(item.getName())) {
 			increaseQuality(item);
-			if (item.getSellIn() < 0) {
+			if (item.getSellIn() < 0)
 				increaseQuality(item);
-			}
 		} else if ("Backstage passes to a TAFKAL80ETC concert".equals(item.getName())) {
 			increaseQuality(item);
-
-			if (item.getSellIn() < 10) {
+			if (item.getSellIn() < 10)
 				increaseQuality(item);
-			}
-
-			if (item.getSellIn() < 5) {
+			if (item.getSellIn() < 5)
 				increaseQuality(item);
-			}
-
-			if (item.getSellIn() < 0) {
+			if (item.getSellIn() < 0)
 				removeQuality(item);
-			}
-
 		} else {
 			decreaseQuality(item);
-			if (item.getSellIn() < 0) {
+			if (item.getSellIn() < 0)
 				decreaseQuality(item);
-			}
 		}
 	}
 
