@@ -1,4 +1,5 @@
 import static com.google.inject.Guice.*;
+import static java.lang.String.*;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
@@ -36,7 +37,14 @@ public class Provider {
 	}
 
 	public <T extends Policy> T providePolicy(Class<T> policy) {
+		mandatory("policy", policy);
 		return injector.getInstance(policy);
+	}
+
+	private void mandatory(String name, Object value) {
+		if (value == null) {
+			throw new IllegalArgumentException(format("%s is mandatory", name));
+		}
 	}
 
 }
