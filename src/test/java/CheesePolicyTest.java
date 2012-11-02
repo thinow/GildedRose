@@ -6,18 +6,18 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class StandardPolicyTest {
+public class CheesePolicyTest {
 
 	private static final int POSITIVE_SELL_IN = 10;
 	private static final int NEGATIVE_SELL_IN = -1;
 
-	private StandardPolicy policy = new StandardPolicy();
+	private CheesePolicy policy = new CheesePolicy();
 
 	@Mock
 	private Item item;
 
 	@Test
-	public void policyDecreaseQuality() throws Exception {
+	public void policyIncreaseQuality() throws Exception {
 		// given
 		defineSellIn(POSITIVE_SELL_IN);
 
@@ -25,11 +25,11 @@ public class StandardPolicyTest {
 		policy.updateQuality(item);
 
 		// then
-		verify(item).decreaseQuality();
+		verify(item).increaseQuality();
 	}
 
 	@Test
-	public void policyDecreaseQualityTwice() throws Exception {
+	public void policyIncreaseQualityTwice() throws Exception {
 		// given
 		defineSellIn(NEGATIVE_SELL_IN);
 
@@ -37,11 +37,10 @@ public class StandardPolicyTest {
 		policy.updateQuality(item);
 
 		// then
-		verify(item, times(2)).decreaseQuality();
+		verify(item, times(2)).increaseQuality();
 	}
 
 	private void defineSellIn(int sellIn) {
 		when(item.getSellIn()).thenReturn(sellIn);
 	}
-
 }
