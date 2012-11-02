@@ -18,6 +18,9 @@ public class Store {
 	private Collection<ItemAndPolicy> itemsAndPolicies = new ArrayList<ItemAndPolicy>();
 
 	public void add(Item item, Policy policy) {
+		Methods.mandatory("item", item);
+		Methods.mandatory("policy", policy);
+
 		itemsAndPolicies.add(new ItemAndPolicy(item, policy));
 	}
 
