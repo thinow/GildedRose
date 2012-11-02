@@ -8,16 +8,30 @@ public class GildedRose {
 
 		provider = new Provider();
 
-		Store store = getStore();
+		supplyStoreWithSomeItems();
+		updateStore();
+	}
 
-		store.add(new Item("+5 Dexterity Vest", 10, 20), asStandard());
-		store.add(new Item("Aged Brie", 2, 0), asCheese());
-		store.add(new Item("Elixir of the Mongoose", 5, 7), asStandard());
-		store.add(new Item("Sulfuras, Hand of Ragnaros", 0, 80), asLegendary());
-		store.add(new Item("Backstage passes to a TAFKAL80ETC concert", 15, 20), asConcertPass());
-		store.add(new Item("Conjured Mana Cake", 3, 6), asStandard());
+	public static void updateStore() {
+		getStore().updateItems();
+	}
 
-		store.updateItems();
+	public static List<Item> getItems() {
+		return getStore().getItems();
+	}
+
+	private static void supplyStoreWithSomeItems() {
+		supplyStoreWith("+5 Dexterity Vest", 10, 20, asStandard());
+		supplyStoreWith("Aged Brie", 2, 0, asCheese());
+		supplyStoreWith("Elixir of the Mongoose", 5, 7, asStandard());
+		supplyStoreWith("Sulfuras, Hand of Ragnaros", 0, 80, asLegendary());
+		supplyStoreWith("Backstage passes to a TAFKAL80ETC concert", 15, 20, asConcertPass());
+		supplyStoreWith("Conjured Mana Cake", 3, 6, asStandard());
+	}
+
+	private static void supplyStoreWith(String name, int sellIn, int quality, Policy policy) {
+		Item item = new Item(name, sellIn, quality);
+		getStore().add(item, policy);
 	}
 
 	private static Store getStore() {
@@ -38,14 +52,6 @@ public class GildedRose {
 
 	private static LegendaryPolicy asLegendary() {
 		return provider.providePolicy(LegendaryPolicy.class);
-	}
-
-	public static void update() {
-		getStore().updateItems();
-	}
-
-	public static List<Item> getItems() {
-		return getStore().getItems();
 	}
 
 }

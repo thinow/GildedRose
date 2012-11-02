@@ -81,7 +81,7 @@ public class HarnessTest {
 	private void runAndUpdateItems(int updatesCount) {
 		GildedRose.main(NO_ARGUMENTS);
 		for (int index = 0; index < updatesCount; index++) {
-			GildedRose.update();
+			GildedRose.updateStore();
 		}
 	}
 }
