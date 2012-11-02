@@ -1,4 +1,5 @@
 import static com.google.inject.Guice.*;
+import lombok.AllArgsConstructor;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
@@ -11,11 +12,16 @@ public class Provider {
 
 	private Injector injector;
 
+	@AllArgsConstructor
 	private static class Module extends AbstractModule {
+		private Provider provider;
 
 		@Override
 		protected void configure() {
+			bind(Provider.class).toInstance(provider);
+
 			bindSingletonOf(Store.class);
+			bindSingletonOf(Supplier.class);
 			bindSingletonOf(POLICIES);
 		}
 
@@ -28,11 +34,15 @@ public class Provider {
 	}
 
 	public Provider() {
-		injector = createInjector(new Module());
+		injector = createInjector(new Module(this));
 	}
 
 	public Store provideStore() {
 		return injector.getInstance(Store.class);
+	}
+
+	public Supplier provideSupplier() {
+		return injector.getInstance(Supplier.class);
 	}
 
 	public <T extends Policy> T providePolicy(Class<T> policy) {
