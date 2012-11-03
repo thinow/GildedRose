@@ -1,9 +1,14 @@
+import static com.google.common.collect.Iterables.*;
+import static com.google.common.collect.Lists.*;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+
+import com.google.common.base.Function;
 
 public class Store {
 
@@ -39,10 +44,11 @@ public class Store {
 	}
 
 	public List<Item> getItems() {
-		List<Item> items = new ArrayList<Item>(itemsAndPolicies.size());
-		for (ItemAndPolicy itemAndPolicy : itemsAndPolicies) {
-			items.add(itemAndPolicy.getItem());
-		}
-		return items;
+		return newArrayList(transform(itemsAndPolicies, new Function<ItemAndPolicy, Item>() {
+			@Override
+			public Item apply(ItemAndPolicy itemAndPolicy) {
+				return itemAndPolicy.getItem();
+			}
+		}));
 	}
 }
