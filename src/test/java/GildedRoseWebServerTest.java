@@ -3,6 +3,8 @@ import static org.fest.assertions.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -15,6 +17,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.google.common.base.Optional;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 public class GildedRoseWebServerTest {
 
@@ -30,6 +34,8 @@ public class GildedRoseWebServerTest {
 	private static ExecutorService executor = Executors.newSingleThreadExecutor();
 
 	private static Provider provider = new Provider();
+
+	private Gson gson = new Gson();
 
 	@BeforeClass
 	public static void setUp() throws Exception {
@@ -86,8 +92,17 @@ public class GildedRoseWebServerTest {
 
 		// then
 		assertJsonResponse(method);
-		String expected = format("[%s]", ITEM.asJson());
-		assertThat(method.getResponseBodyAsString()).isEqualTo(expected);
+		assertJsonItem(method, ITEM);
+	}
+
+	private void assertJsonItem(HttpMethod method, Item item) throws IOException {
+		Collection<Item> result = gson.fromJson(method.getResponseBodyAsString(), arrayOfItem());
+		assertThat(result).containsOnly(ITEM);
+	}
+
+	private Type arrayOfItem() {
+		return new TypeToken<Collection<Item>>() {
+		}.getType();
 	}
 
 	private void assertJsonResponse(HttpMethod method) {

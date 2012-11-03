@@ -18,9 +18,9 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
-import com.google.common.collect.Iterables;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.stream.JsonWriter;
 
 @RequiredArgsConstructor
 public class GildedRoseWebServer {
@@ -117,17 +117,40 @@ public class GildedRoseWebServer {
 			Store store = provider.provideStore();
 			List<Item> items = store.getItems();
 
-			Iterable<String> jsonItems = Iterables.transform(items, new Function<Item, String>() {
-				@Override
-				public String apply(Item input) {
-					return input.asJson();
-				}
-			});
+			JsonWrapper jsonWrapper = new JsonWrapper(resp);
+			jsonWrapper.write(items);
+		}
+	}
 
-			resp.setHeader("Content-Type", "application/json");
-			PrintWriter writer = resp.getWriter();
-			writer.print(format("[%s]", Joiner.on(',').join(jsonItems)));
+	/* ********************************************************************* */
+
+	@RequiredArgsConstructor
+	private static class JsonWrapper {
+		private GsonBuilder builder = new GsonBuilder();
+
+		@NonNull
+		private HttpServletResponse response;
+
+		public void write(Object value) {
+			defineJsonHeaderFor(response);
+
+			Gson gson = builder.create();
+			gson.toJson(value, value.getClass(), writerOf(response));
+		}
+
+		private void defineJsonHeaderFor(HttpServletResponse response) {
+			response.setHeader("Content-Type", "application/json");
+			response.setCharacterEncoding("UTF-8");
+		}
+
+		private JsonWriter writerOf(HttpServletResponse response) {
+			try {
+				return new JsonWriter(response.getWriter());
+			} catch (IOException e) {
+				throw new IllegalStateException("Cannot get writer from response", e);
+			}
 		}
 
 	}
+
 }
