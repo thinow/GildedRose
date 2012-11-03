@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
@@ -84,8 +85,14 @@ public class GildedRoseWebServerTest {
 		HttpMethod method = call("/items");
 
 		// then
+		assertJsonResponse(method);
 		String expected = format("[%s]", ITEM.asJson());
 		assertThat(method.getResponseBodyAsString()).isEqualTo(expected);
+	}
+
+	private void assertJsonResponse(HttpMethod method) {
+		Header contentType = method.getResponseHeader("Content-Type");
+		assertThat(contentType.getValue()).startsWith("application/json");
 	}
 
 	private HttpMethod call(String context) throws IOException, HttpException {

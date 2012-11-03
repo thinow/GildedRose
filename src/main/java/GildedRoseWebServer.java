@@ -124,6 +124,7 @@ public class GildedRoseWebServer {
 				}
 			});
 
+			resp.setHeader("Content-Type", "application/json");
 			PrintWriter writer = resp.getWriter();
 			writer.print(format("[%s]", Joiner.on(',').join(jsonItems)));
 		}
