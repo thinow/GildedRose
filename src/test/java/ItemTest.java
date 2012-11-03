@@ -82,4 +82,13 @@ public class ItemTest {
 		assertThat(item.getQuality()).isEqualTo(expected);
 	}
 
+	@Test
+	public void transformItemIntoJson() throws Exception {
+		// when
+		String json = item.asJson();
+
+		// then
+		assertThat(json).isEqualTo("{\"name\":\"NAME\",\"sellIn\":5,\"quality\":10}");
+	}
+
 }

@@ -2,12 +2,15 @@ import static java.lang.String.*;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
+import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -15,20 +18,27 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.collect.Iterables;
+
 @RequiredArgsConstructor
 public class GildedRoseWebServer {
 
-	private Server server;
-	private ServletContextHandler context;
-
+	@NonNull
+	private Provider provider;
 	@NonNull
 	private int port;
+
+	private Server server;
+	private ServletContextHandler context;
 
 	public void start() {
 		server = new Server(port);
 		context = buildServerContext(server);
 
-		bind("/*", new HelloServlet());
+		bind("/hello", new HelloServlet());
+		bind("/items", new ItemsServlet(provider));
 
 		startWithErrorsHandling(server);
 	}
@@ -42,7 +52,7 @@ public class GildedRoseWebServer {
 		return context;
 	}
 
-	private void bind(String path, HelloServlet servlet) {
+	private void bind(String path, Servlet servlet) {
 		context.addServlet(new ServletHolder(servlet), path);
 	}
 
@@ -62,7 +72,10 @@ public class GildedRoseWebServer {
 	public static void main(String[] args) {
 		int port = findPort();
 
-		GildedRoseWebServer server = new GildedRoseWebServer(port);
+		Provider provider = new Provider();
+		provider.provideSupplier().supplyStoreWithSomeItems();
+
+		GildedRoseWebServer server = new GildedRoseWebServer(provider, port);
 		server.start();
 	}
 
@@ -90,4 +103,30 @@ public class GildedRoseWebServer {
 		}
 	}
 
+	@AllArgsConstructor
+	private static class ItemsServlet extends HttpServlet {
+
+		private static final long serialVersionUID = 1265017917708318188L;
+
+		private Provider provider;
+
+		@Override
+		protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+				throws ServletException, IOException {
+
+			Store store = provider.provideStore();
+			List<Item> items = store.getItems();
+
+			Iterable<String> jsonItems = Iterables.transform(items, new Function<Item, String>() {
+				@Override
+				public String apply(Item input) {
+					return input.asJson();
+				}
+			});
+
+			PrintWriter writer = resp.getWriter();
+			writer.print(format("[%s]", Joiner.on(',').join(jsonItems)));
+		}
+
+	}
 }

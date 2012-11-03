@@ -1,4 +1,5 @@
 import static java.lang.Math.*;
+import static java.lang.String.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -27,6 +28,10 @@ public class Item {
 
 	public void removeQuality() {
 		quality = 0;
+	}
+
+	public String asJson() {
+		return format("{\"name\":\"%s\",\"sellIn\":%d,\"quality\":%d}", name, sellIn, quality);
 	}
 
 }
