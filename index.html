@@ -8,20 +8,46 @@
 </head>
 <body>
 
-	<h1>GildedRose - thinow</h1>
-	
-	<div id="content"></div>
+<h1>GildedRose - thinow</h1>
+
+<script type="text/plain" id="template">
+	<table>
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Sell in</th>
+				<th>Quality</th>
+			</tr>
+		</thead>
+		<tbody>
+			{{#.}}
+			<tr>
+				<td>{{name}}</td>
+				<td>{{sellIn}}</td>
+				<td>{{quality}}</td>
+			</tr>
+			{{/.}}
+		</tbody>
+	</table>
+</script>
 
 <script type="text/javascript">
+var server = 'http://gilded-rose-by-thinow.herokuapp.com';
+
 $(document).ready(function() {
-
-	$.getJSON('http://gilded-rose-by-thinow.herokuapp.com/items?callback=?', function(data) {
-
-		$('#content').append(Mustache.render('{{#.}}{{name}}<br/>{{/.}}', data));
-		
-	});
-
+	displayItems();
 });
+
+function displayItems() {
+	$.getJSON(server + '/items?callback=?', function(data) {
+		render('#template', data);
+	});
+}
+
+function render(templateElement, json) {
+	var template = $(templateElement).html();
+	$(templateElement).replaceWith(Mustache.to_html(template, json));
+}
 </script>
 
 </body>
