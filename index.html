@@ -42,30 +42,35 @@
 var server = 'http://gilded-rose-by-thinow.herokuapp.com';
 
 $(document).ready(function() {
-	retrieveItems();
+	retrieveItems('');
 	bindButtons();
 });
-
-function bindButtons() {
-	$('#reset').click(function() {
-		retrieveItems();
-	});
-	$('#update').click(function() {
-		retrieveItems();
-	});
-};
-
-function retrieveItems() {
-	showLoading();
-	$.getJSON(server + '/items?callback=?', function(data) {
-		render('#template', data, '#items');
-		showContainer();
-	});
-}
 
 function render(templateElement, json, destination) {
 	var template = $(templateElement).html();
 	$(destination).replaceWith(Mustache.to_html(template, json));
+}
+
+function bindButtons() {
+	$('#reset').click(function() {
+		requestItems('reset');
+	});
+	$('#update').click(function() {
+		requestItems('update');
+	});
+};
+
+function requestItems(order) {
+	showLoading();
+	retrieveItems('/' + order);
+}
+
+function retrieveItems(page) {
+	var url = server + '/items' + page + '?callback=?';
+	$.getJSON(url, function(data) {
+		render('#template', data, '#items');
+		showContainer();
+	});
 }
 
 function showContainer() {
