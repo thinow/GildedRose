@@ -38,8 +38,7 @@ public class GildedRoseWebServer {
 		server = new Server(port);
 		context = buildServerContext(server);
 
-		bind("/hello", new HelloServlet());
-		bind("/items", new ItemsServlet(provider));
+		bind("/*", new ItemsServlet(provider));
 
 		startWithErrorsHandling(server);
 	}
@@ -88,22 +87,6 @@ public class GildedRoseWebServer {
 		}
 	}
 
-	/* ********************************************************************* */
-
-	private static class HelloServlet extends HttpServlet {
-
-		private static final long serialVersionUID = -4588984111995703530L;
-
-		@Override
-		protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-				throws ServletException, IOException {
-
-			PrintWriter writer = resp.getWriter();
-			writer.println("Hello Gilded Rose !");
-
-		}
-	}
-
 	@AllArgsConstructor
 	private static class ItemsServlet extends HttpServlet {
 
@@ -115,11 +98,25 @@ public class GildedRoseWebServer {
 		protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 				throws ServletException, IOException {
 
+			handleRequestedOrder(req);
+
 			Store store = provider.provideStore();
 			List<Item> items = store.getItems();
 
 			JsonWrapper jsonWrapper = new JsonWrapper(req, resp);
 			jsonWrapper.write(items);
+		}
+
+		private void handleRequestedOrder(HttpServletRequest request) {
+			String uri = request.getRequestURI();
+
+			if (uri.endsWith("update")) {
+				Store store = provider.provideStore();
+				store.updateItems();
+			} else if (uri.endsWith("reset")) {
+				Supplier supplier = provider.provideSupplier();
+				supplier.supplyStoreWithSomeItems();
+			}
 		}
 	}
 

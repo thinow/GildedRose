@@ -13,6 +13,7 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.InOrder;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
@@ -32,6 +33,7 @@ public class GildedRoseWebServerTest {
 
 	private static Provider provider = mock(Provider.class);
 	private static Store store = mock(Store.class);
+	private static Supplier supplier = mock(Supplier.class);
 
 	@BeforeClass
 	public static void setUp() throws Exception {
@@ -68,17 +70,9 @@ public class GildedRoseWebServerTest {
 	}
 
 	private static void supplyStoreWith(Item item) {
+		when(provider.provideSupplier()).thenReturn(supplier);
 		when(provider.provideStore()).thenReturn(store);
 		when(store.getItems()).thenReturn(Lists.newArrayList(item));
-	}
-
-	@Test
-	public void serverSayHello() throws Exception {
-		// when
-		HttpMethod method = call("/hello");
-
-		// then
-		assertThat(method.getResponseBodyAsString()).startsWith("Hello");
 	}
 
 	@Test
@@ -98,7 +92,39 @@ public class GildedRoseWebServerTest {
 
 		// then
 		assertJsonResponseHeaders(method);
-		assertJsonResponseBody(method, format("callbackName(%s)", ITEMS_AS_JSON));
+		assertJsonResponseBody(method, expectedJsonAndCallback(ITEMS_AS_JSON, "callbackName"));
+	}
+
+	private String expectedJsonAndCallback(String json, String callback) {
+		return format("%s(%s)", callback, json);
+	}
+
+	@Test
+	public void serverUpdateItems() throws Exception {
+		// when
+		HttpMethod method = call("/items/update?callback=callbackName");
+
+		// then
+		InOrder inOrder = inOrder(store);
+		inOrder.verify(store).updateItems();
+		inOrder.verify(store).getItems();
+
+		assertJsonResponseHeaders(method);
+		assertJsonResponseBody(method, expectedJsonAndCallback(ITEMS_AS_JSON, "callbackName"));
+	}
+
+	@Test
+	public void serverResetItems() throws Exception {
+		// when
+		HttpMethod method = call("/items/reset?callback=callbackName");
+
+		// then
+		InOrder inOrder = inOrder(store, supplier);
+		inOrder.verify(supplier).supplyStoreWithSomeItems();
+		inOrder.verify(store).getItems();
+
+		assertJsonResponseHeaders(method);
+		assertJsonResponseBody(method, expectedJsonAndCallback(ITEMS_AS_JSON, "callbackName"));
 	}
 
 	private void assertJsonResponseHeaders(HttpMethod method) {
