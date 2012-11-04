@@ -29,6 +29,57 @@
 <div class="container" id="container" style="display:none">
 <h1>Inventory</h1>
 
+<div id="items"></div>
+
+<div class="control-group">
+	<a id="reset" class="btn btn-large btn-danger" style="float:left"><i class="icon-undo"></i> Reset</a>
+	<a id="update" class="btn btn-large btn-success" style="float:right"><i class="icon-play"></i> Update Quality</a>
+</div>
+
+</div>
+
+<script type="text/javascript">
+var server = 'http://gilded-rose-by-thinow.herokuapp.com';
+
+$(document).ready(function() {
+	retrieveItems();
+	bindButtons();
+});
+
+function bindButtons() {
+	$('#reset').click(function() {
+		retrieveItems();
+	});
+	$('#update').click(function() {
+		retrieveItems();
+	});
+};
+
+function retrieveItems() {
+	showLoading();
+	$.getJSON(server + '/items?callback=?', function(data) {
+		render('#template', data, '#items');
+		showContainer();
+	});
+}
+
+function render(templateElement, json, destination) {
+	var template = $(templateElement).html();
+	$(destination).replaceWith(Mustache.to_html(template, json));
+}
+
+function showContainer() {
+	$('#loading').hide();
+	$('#container').show();
+}
+
+function showLoading() {
+	$('#container').hide();
+	$('#loading').show();
+}
+
+</script>
+
 <script type="text/plain" id="template">
 	<table class="table table-striped">
 		<thead>
@@ -48,35 +99,6 @@
 			{{/.}}
 		</tbody>
 	</table>
-</script>
-
-<div class="control-group">
-	<a class="btn btn-large btn-danger" style="float:left" href="#"><i class="icon-undo"></i> Reset</a>
-	<a class="btn btn-large btn-success" style="float:right" href="#"><i class="icon-play"></i> Update Quality</a>
-</div>
-
-</div>
-
-<script type="text/javascript">
-var server = 'http://gilded-rose-by-thinow.herokuapp.com';
-
-$(document).ready(function() {
-	displayItems();
-});
-
-function displayItems() {
-	$.getJSON(server + '/items?callback=?', function(data) {
-		render('#template', data);
-
-		$('#loading').hide();
-		$('#container').show();
-	});
-}
-
-function render(templateElement, json) {
-	var template = $(templateElement).html();
-	$(templateElement).replaceWith(Mustache.to_html(template, json));
-}
 </script>
 
 </body>
