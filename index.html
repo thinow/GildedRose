@@ -22,7 +22,11 @@
 	</div>
 </div>
 
-<div class="container">
+<div id="loading" style="text-align:center">
+	<a href="#" class="btn btn-link btn-large" style="color: grey;"><i class="icon-caret-right"></i> Loading...</a>
+</div>
+
+<div class="container" id="container" style="display:none">
 <h1>Inventory</h1>
 
 <script type="text/plain" id="template">
@@ -62,11 +66,10 @@ $(document).ready(function() {
 
 function displayItems() {
 	$.getJSON(server + '/items?callback=?', function(data) {
-		$.each(data, function(index, item) {
-			item.index = index;
-		});
-		
 		render('#template', data);
+
+		$('#loading').hide();
+		$('#container').show();
 	});
 }
 
