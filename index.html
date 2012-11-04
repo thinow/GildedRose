@@ -48,7 +48,7 @@ $(document).ready(function() {
 
 function render(templateElement, json, destination) {
 	var template = $(templateElement).html();
-	$(destination).replaceWith(Mustache.to_html(template, json));
+	$(destination).html(Mustache.to_html(template, json));
 }
 
 function bindButtons() {
