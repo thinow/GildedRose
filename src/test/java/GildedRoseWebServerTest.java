@@ -3,8 +3,6 @@ import static org.fest.assertions.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.Collection;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -17,25 +15,21 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.google.common.base.Optional;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.google.common.collect.Lists;
 
 public class GildedRoseWebServerTest {
 
-	private static final Policy ANY_POLICY = mock(Policy.class);
+	private static final int DEFAULT_PORT = 8080;
 
 	private static final Item ITEM = new Item("Any item", 7, 13);
-
-	private static final int DEFAULT_PORT = 8080;
 
 	private static GildedRoseWebServer server;
 	private static int port;
 
 	private static ExecutorService executor = Executors.newSingleThreadExecutor();
 
-	private static Provider provider = new Provider();
-
-	private Gson gson = new Gson();
+	private static Provider provider = mock(Provider.class);
+	private static Store store = mock(Store.class);
 
 	@BeforeClass
 	public static void setUp() throws Exception {
@@ -72,8 +66,8 @@ public class GildedRoseWebServerTest {
 	}
 
 	private static void supplyStoreWith(Item item) {
-		Store store = provider.provideStore();
-		store.add(item, ANY_POLICY);
+		when(provider.provideStore()).thenReturn(store);
+		when(store.getItems()).thenReturn(Lists.newArrayList(item));
 	}
 
 	@Test
@@ -91,23 +85,18 @@ public class GildedRoseWebServerTest {
 		HttpMethod method = call("/items");
 
 		// then
-		assertJsonResponse(method);
-		assertJsonItem(method, ITEM);
+		assertJsonResponseHeaders(method);
+		assertJsonResponseBody(method, "[{\"name\":\"Any item\",\"sellIn\":7,\"quality\":13}]");
 	}
 
-	private void assertJsonItem(HttpMethod method, Item item) throws IOException {
-		Collection<Item> result = gson.fromJson(method.getResponseBodyAsString(), arrayOfItem());
-		assertThat(result).containsOnly(ITEM);
-	}
-
-	private Type arrayOfItem() {
-		return new TypeToken<Collection<Item>>() {
-		}.getType();
-	}
-
-	private void assertJsonResponse(HttpMethod method) {
+	private void assertJsonResponseHeaders(HttpMethod method) {
 		Header contentType = method.getResponseHeader("Content-Type");
 		assertThat(contentType.getValue()).startsWith("application/json");
+	}
+
+	private void assertJsonResponseBody(HttpMethod method, String expected) throws IOException {
+		String json = method.getResponseBodyAsString();
+		assertThat(json).isEqualTo(expected);
 	}
 
 	private HttpMethod call(String context) throws IOException, HttpException {
