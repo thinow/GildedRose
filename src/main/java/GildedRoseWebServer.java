@@ -18,6 +18,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
+import com.google.common.base.Optional;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonWriter;
@@ -117,7 +118,7 @@ public class GildedRoseWebServer {
 			Store store = provider.provideStore();
 			List<Item> items = store.getItems();
 
-			JsonWrapper jsonWrapper = new JsonWrapper(resp);
+			JsonWrapper jsonWrapper = new JsonWrapper(req, resp);
 			jsonWrapper.write(items);
 		}
 	}
@@ -129,13 +130,23 @@ public class GildedRoseWebServer {
 		private GsonBuilder builder = new GsonBuilder();
 
 		@NonNull
+		private HttpServletRequest request;
+		@NonNull
 		private HttpServletResponse response;
 
 		public void write(Object value) {
+			Optional<String> callback = findCallbackInto(request);
+
 			defineJsonHeaderFor(response);
 
-			Gson gson = builder.create();
-			gson.toJson(value, value.getClass(), writerOf(response));
+			injectPrefixFor(callback);
+			injectJsonBody(value);
+			injectSuffixFor(callback);
+		}
+
+		private Optional<String> findCallbackInto(HttpServletRequest request) {
+			String callback = request.getParameter("callback");
+			return Optional.fromNullable(callback);
 		}
 
 		private void defineJsonHeaderFor(HttpServletResponse response) {
@@ -143,9 +154,32 @@ public class GildedRoseWebServer {
 			response.setCharacterEncoding("UTF-8");
 		}
 
-		private JsonWriter writerOf(HttpServletResponse response) {
+		private void injectPrefixFor(Optional<String> callback) {
+			if (callback.isPresent()) {
+				String text = format("%s(", callback.get());
+				printWriterOf(response).print(text);
+			}
+		}
+
+		private void injectJsonBody(Object value) {
+			Gson gson = builder.create();
+			gson.toJson(value, value.getClass(), jsonWriterOf(response));
+		}
+
+		private void injectSuffixFor(Optional<String> callback) {
+			if (callback.isPresent()) {
+				String text = ")";
+				printWriterOf(response).print(text);
+			}
+		}
+
+		private JsonWriter jsonWriterOf(HttpServletResponse response) {
+			return new JsonWriter(printWriterOf(response));
+		}
+
+		private PrintWriter printWriterOf(HttpServletResponse response) {
 			try {
-				return new JsonWriter(response.getWriter());
+				return response.getWriter();
 			} catch (IOException e) {
 				throw new IllegalStateException("Cannot get writer from response", e);
 			}

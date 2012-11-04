@@ -19,6 +19,8 @@ import com.google.common.collect.Lists;
 
 public class GildedRoseWebServerTest {
 
+	private static final String ITEMS_AS_JSON = "[{\"name\":\"Any item\",\"sellIn\":7,\"quality\":13}]";
+
 	private static final int DEFAULT_PORT = 8080;
 
 	private static final Item ITEM = new Item("Any item", 7, 13);
@@ -86,7 +88,17 @@ public class GildedRoseWebServerTest {
 
 		// then
 		assertJsonResponseHeaders(method);
-		assertJsonResponseBody(method, "[{\"name\":\"Any item\",\"sellIn\":7,\"quality\":13}]");
+		assertJsonResponseBody(method, ITEMS_AS_JSON);
+	}
+
+	@Test
+	public void serverProvideItemsWithCallbackPadding() throws Exception {
+		// when
+		HttpMethod method = call("/items?callback=callbackName");
+
+		// then
+		assertJsonResponseHeaders(method);
+		assertJsonResponseBody(method, format("callbackName(%s)", ITEMS_AS_JSON));
 	}
 
 	private void assertJsonResponseHeaders(HttpMethod method) {
