@@ -24,7 +24,7 @@
 <h1>Inventory</h1>
 
 <script type="text/plain" id="template">
-	<table>
+	<table class="table table-striped">
 		<thead>
 			<tr>
 				<th>Name</th>
@@ -35,8 +35,8 @@
 		<tbody>
 			{{#.}}
 			<tr>
-				<td>{{name}}</td>
-				<td>{{sellIn}}</td>
+				<td><a href="#">{{name}}</a></td>
+				<td>{{sellIn}} days</td>
 				<td>{{quality}}</td>
 			</tr>
 			{{/.}}
@@ -55,6 +55,10 @@ $(document).ready(function() {
 
 function displayItems() {
 	$.getJSON(server + '/items?callback=?', function(data) {
+		$.each(data, function(index, item) {
+			item.index = index;
+		});
+		
 		render('#template', data);
 	});
 }
