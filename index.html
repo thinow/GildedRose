@@ -8,7 +8,7 @@
 </head>
 <body>
 
-	<h1>Hello GildedRose WebPage !</h1>
+	<h1>GildedRose - thinow</h1>
 	
 	<div id="content"></div>
 
@@ -16,7 +16,9 @@
 $(document).ready(function() {
 
 	$.getJSON('http://gilded-rose-by-thinow.herokuapp.com/items?callback=?', function(data) {
-		window.alert('success !');
+
+		$('#content').append(Mustache.render('{{#.}}{{name}}<br/>{{/.}}', data));
+		
 	});
 
 });
