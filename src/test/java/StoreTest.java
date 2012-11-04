@@ -54,4 +54,18 @@ public class StoreTest {
 		verifyNoMoreInteractions(ITEM, POLICY);
 	}
 
+	@Test
+	public void emptyStore() throws Exception {
+		// given
+		store.add(ITEM, POLICY);
+		store.add(ANOTHER_ITEM, POLICY);
+
+		// when
+		store.empty();
+
+		// then
+		List<Item> items = store.getItems();
+		assertThat(items).isEmpty();
+	}
+
 }

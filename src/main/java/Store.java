@@ -51,4 +51,8 @@ public class Store {
 			}
 		}));
 	}
+
+	public void empty() {
+		itemsAndPolicies.clear();
+	}
 }

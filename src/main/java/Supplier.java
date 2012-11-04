@@ -13,12 +13,17 @@ public class Supplier {
 	}
 
 	public void supplyStoreWithSomeItems() {
+		emptyStore();
 		supplyStoreWith("+5 Dexterity Vest", 10, 20, asStandard());
 		supplyStoreWith("Aged Brie", 2, 0, asCheese());
 		supplyStoreWith("Elixir of the Mongoose", 5, 7, asStandard());
 		supplyStoreWith("Sulfuras, Hand of Ragnaros", 0, 80, asLegendary());
 		supplyStoreWith("Backstage passes to a TAFKAL80ETC concert", 15, 20, asConcertPass());
 		supplyStoreWith("Conjured Mana Cake", 3, 6, asStandard());
+	}
+
+	private void emptyStore() {
+		provideStore().empty();
 	}
 
 	private void supplyStoreWith(String name, int sellIn, int quality, Policy policy) {
